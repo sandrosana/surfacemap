@@ -1,0 +1,32 @@
+name: SurfaceMap CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        python -m venv venv
+        source venv/bin/activate
+        pip install -r requirements.txt
+
+    - name: Run discovery & analysis test
+      run: |
+        source venv/bin/activate
+        python surfacemap.py --domain test.com --output results.json
+        python surfacemap.py --analyze --output results.json
