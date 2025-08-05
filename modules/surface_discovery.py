@@ -1,4 +1,6 @@
 import json
+from pathlib import Path
+
 
 def run_discovery(domain, output_file):
     print(f"[+] Starting surface discovery for: {domain}")
@@ -8,7 +10,13 @@ def run_discovery(domain, output_file):
         "ips": ["192.0.2.1", "198.51.100.23"]
     }
 
-    with open(output_file, "w") as f:
+    base_dir = Path.cwd().resolve()
+    output_path = Path(output_file).expanduser().resolve()
+    if not output_path.is_relative_to(base_dir):
+        print(f"[!] Output path escapes working directory: {output_file}")
+        return
+
+    with output_path.open("w", encoding="utf-8") as f:
         json.dump(results, f, indent=2)
 
-    print(f"[+] Discovery results saved to {output_file}")
+    print(f"[+] Discovery results saved to {output_path}")
